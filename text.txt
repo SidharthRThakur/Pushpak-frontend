@@ -1,0 +1,164 @@
+
+
+password- N4TJKOeJFNrb8sWl
+username-tsidharthsingh
+N4TJKOeJFNrb8sWl    
+
+signup.js-
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+function Signup() {
+  // to the se data in tempraroy storage
+  const [signupInfo, setsignupInfo] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const handleChange = (e) => {
+    // Handle input changes
+    // name → input ka name attribute
+    // value → input ki current value
+    const { name, value } = e.target; // e=yeh us event ka data hai jo trigger hua hai (onChange)
+    // e.target us HTML element ko point karta hai jahan par event hua hai.
+    // Toh jab user kuch type karega, handleChange function call hoga — aur:
+    // e.target → points to the <input>
+    // e.target.name → "email"
+    // e.target.value → jo bhi user ne type kiya (for example: "sid@example.com")
+    console.log(name, value);
+    const copySignupInfo = { ...signupInfo }; // Create a copy of the signup state and extract the signupInfo here
+    copySignupInfo[name] = value; // name add karni hai aur value ko update karna hai
+    setsignupInfo(copySignupInfo); // now set the copySignupInfo to the signupInfo state
+    console.log("signupInfo->", signupInfo); // This will log the current state of signupInfo whenever it changes// Runtime per jo b value set ho rahi hai, wo yahan par print hogi
+    //signupInfo-> {name: 'sdd', email: 'sdd@gmail.com', password: '1234'}
+    const handleSignup = (e) => {};
+    e.preventDefault();
+  };
+  return (
+    <div className="container">
+      <h1>Signup</h1>
+      <form onSubmit={handleSignup}>
+        {/*  signup form component */}
+        <div>
+          <label htmlFor="name">Name:</label>
+          <input
+            onChange={handleChange}
+            type="text"
+            name="name"
+            autoFocus
+            placeholder="Enter your name"
+          />
+        </div>
+        <div>
+          <label htmlFor="email">Email:</label>
+          <input
+            onChange={handleChange}
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+          />
+        </div>
+        <div>
+          <label htmlFor="password">Password:</label>
+          <input
+            onChange={handleChange}
+            type="password"
+            name="password"
+            placeholder="Enter your password"
+          />
+        </div>
+        <button type="submit">Signup</button>
+      </form>
+      <span>
+        Already have an account? <Link to="/login">Login</Link>
+      </span>
+      <ToastContainer />
+      {/* Add toast notifications here */}
+    </div>
+  );
+}
+
+export default Signup;
+
+
+backend ----------------------------------------------------------------------------------------------------------------------
+Expense-Controller - const UserModel = require("../Models/User"); // Import the UserModel to interact with the user collection in the database
+const addExpenses = async (req, res) => {
+  const body = req.body; // Get the request body
+  const { _id } = req.user; // Extract user ID from the request object (assuming user is authenticated)
+
+  //   console.log(body, _id);//   //   Log the request body to the console
+  // //  res.send("success"); // Here you would typically add logic to save the expense to a database
+  try {
+    // acquire the UserModel from the database
+    const userData = await UserModel.findByIdAndUpdate(
+      // we need to update the user document , it takes three paramter
+      _id, // Find the user by ID
+      { $push: { expenses: body } }, // Push the new expense into the user's expenses array
+      { new: true } // Return the updated user documents
+    );
+    //  now return the userData as a response
+    res.status(200).json({
+      message: "Expense added successfully",
+      success: true,
+      data: userData?.expenses, // Return the updated user data
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Somthing went wrong", error: err, success: false });
+  }
+};
+// Function to add expenses
+const fetchExpenses = (req, res) => {
+  res.send("fetchExpenses");
+}; // Function to fetch expenses
+const deleteExpense = (req, res) => {
+  res.send("deleteExpense");
+}; // Function to delete an expense
+
+module.exports = {
+  addExpenses,
+  fetchExpenses,
+  deleteExpense,
+};
+
+
+
+
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://tsidharthsingh:<db_password>@cluster0.lwvlnjg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+run().catch(console.dir);
+
+
+mongosh "mongodb+srv://cluster0.lwvlnjg.mongodb.net/" --apiVersion 1 --username tsidharthsingh
+
+
+
+
+cors - suppose our server is running on 8080 and our client(REact ) is running on 3000, client will gonna call to 8080, 
+this server will say that i dont know the cors server , and to resolve this porblem we have used cors module so that the request
+which willl be coming from 3000 will allow 
+app.cors([]) , by this Aarray using inside the cors , thn only those were allowed (ip address) whihc are mention in it.

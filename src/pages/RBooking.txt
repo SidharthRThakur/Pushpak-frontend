@@ -1,0 +1,62 @@
+// frontend/src/pages/Booking.js
+import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
+/**
+ * Booking page: shows details of the ride object passed from Home.js
+ */
+function Booking() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const ride = location.state?.ride;
+
+  if (!ride) {
+    return (
+      <div className="flex flex-col justify-center items-center min-h-screen">
+        <h2 className="text-2xl font-bold mb-4">No ride data available</h2>
+        <button
+          onClick={() => navigate("/home")}
+          className="bg-black text-white px-4 py-2 rounded-lg"
+        >
+          Back to Home
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-50">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
+        <h1 className="text-3xl font-bold mb-6 text-center">Your Ride</h1>
+
+        <div className="space-y-4">
+          <p><strong>Ride ID:</strong> {ride.id}</p>
+          <p><strong>Status:</strong> {ride.status}</p>
+
+          <p>
+            <strong>Pickup:</strong>{" "}
+            {ride.pickup?.lat}, {ride.pickup?.lng}
+          </p>
+          <p>
+            <strong>Dropoff:</strong>{" "}
+            {ride.dropoff?.lat}, {ride.dropoff?.lng}
+          </p>
+
+          <p><strong>Fare:</strong> ₹{(ride.fare_cents / 100).toFixed(2)}</p>
+        </div>
+
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => navigate("/home")}
+            className="bg-black text-white px-6 py-2 rounded-lg"
+          >
+            Back to Home
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Booking;
